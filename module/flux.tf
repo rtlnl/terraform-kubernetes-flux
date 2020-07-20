@@ -20,7 +20,7 @@ resource "kubernetes_config_map" "flux_kube_config" {
   }
 
   data = {
-    config = "apiVersion: v1\nclusters: []\ncontexts:\n- context:\n    cluster: \"\"\n    namespace: default\n    user: \"\"\n  name: default\ncurrent-context: default\nkind: Config\npreferences: {}\nusers: []\n"
+    config = local.config
   }
 }
 
@@ -155,11 +155,12 @@ resource "kubernetes_deployment" "flux" {
       }
 
       spec {
+        automount_service_account_token = true
         volume {
           name = "kubedir"
 
           config_map {
-            name = kubernetes_config_map.
+            name = kubernetes_config_map.flux_kube_config.metadata.0.name
           }
         }
 

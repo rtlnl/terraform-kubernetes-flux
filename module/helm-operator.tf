@@ -1,6 +1,7 @@
 resource "kubernetes_service_account" "helm_operator" {
   metadata {
     name = "helm-operator"
+    namespace = var.namespace
 
     labels = {
       app = "helm-operator"
@@ -11,10 +12,11 @@ resource "kubernetes_service_account" "helm_operator" {
 resource "kubernetes_config_map" "helm_operator_kube_config" {
   metadata {
     name = "helm-operator-kube-config"
+    namespace = var.namespace
   }
 
   data = {
-    config = "apiVersion: v1\nclusters: []\ncontexts:\n- context:\n    cluster: \"\"\n    namespace: default\n    user: \"\"\n  name: default\ncurrent-context: default\nkind: Config\npreferences: {}\nusers: []\n"
+    config = local.config
   }
 }
 
@@ -64,7 +66,7 @@ resource "kubernetes_cluster_role_binding" "helm_operator" {
 resource "kubernetes_service" "helm_operator" {
   metadata {
     name = "helm-operator"
-
+    namespace = var.namespace
     labels = {
       app = "helm-operator"
     }
@@ -80,8 +82,6 @@ resource "kubernetes_service" "helm_operator" {
 
     selector = {
       app = "helm-operator"
-
-      release = "helm-operator"
     }
 
     type = "ClusterIP"
@@ -91,6 +91,7 @@ resource "kubernetes_service" "helm_operator" {
 resource "kubernetes_deployment" "helm_operator" {
   metadata {
     name = "helm-operator"
+    namespace = var.namespace
 
     labels = {
       app = "helm-operator"
@@ -114,11 +115,12 @@ resource "kubernetes_deployment" "helm_operator" {
       }
 
       spec {
+        automount_service_account_token = true
         volume {
           name = "git-key"
 
           secret {
-            secret_name  = "flux-git-deploy"
+            secret_name  = kubernetes_secret.flux_git_deploy.metadata.0.name
             default_mode = "0400"
           }
         }
