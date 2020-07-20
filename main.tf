@@ -1,0 +1,3 @@
+module "flux" {
+  source = "./module"
+}
