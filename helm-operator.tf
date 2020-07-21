@@ -1,3 +1,10 @@
+resource "null_resource" "crds" {
+
+  provisioner "local-exec" {
+    command = "kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml"
+  }
+}
+
 resource "kubernetes_service_account" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
@@ -95,6 +102,7 @@ resource "kubernetes_service" "helm_operator" {
 
 resource "kubernetes_deployment" "helm_operator" {
   count = var.helm_operator ? 1 : 0
+  depends_on = [null_resource.crds]
   metadata {
     name = "helm-operator"
     namespace = var.namespace
