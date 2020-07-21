@@ -1,4 +1,5 @@
 resource "kubernetes_service_account" "helm_operator" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator"
     namespace = var.namespace
@@ -10,6 +11,7 @@ resource "kubernetes_service_account" "helm_operator" {
 }
 
 resource "kubernetes_config_map" "helm_operator_kube_config" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator-kube-config"
     namespace = var.namespace
@@ -21,6 +23,7 @@ resource "kubernetes_config_map" "helm_operator_kube_config" {
 }
 
 resource "kubernetes_cluster_role" "helm_operator" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator"
 
@@ -42,6 +45,7 @@ resource "kubernetes_cluster_role" "helm_operator" {
 }
 
 resource "kubernetes_cluster_role_binding" "helm_operator" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator"
 
@@ -64,6 +68,7 @@ resource "kubernetes_cluster_role_binding" "helm_operator" {
 }
 
 resource "kubernetes_service" "helm_operator" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator"
     namespace = var.namespace
@@ -89,6 +94,7 @@ resource "kubernetes_service" "helm_operator" {
 }
 
 resource "kubernetes_deployment" "helm_operator" {
+  count = var.helm_operator ? 1 : 0
   metadata {
     name = "helm-operator"
     namespace = var.namespace
@@ -127,7 +133,7 @@ resource "kubernetes_deployment" "helm_operator" {
 
         container {
           name  = "flux-helm-operator"
-          image = "docker.io/fluxcd/helm-operator:1.1.0"
+          image = "docker.io/fluxcd/helm-operator:${var.helm_operator_version}"
           args  = ["--enabled-helm-versions=v3", "--log-format=fmt", "--git-timeout=20s", "--git-poll-interval=5m", "--charts-sync-interval=3m", "--status-update-interval=30s", "--update-chart-deps=true", "--log-release-diffs=false", "--workers=4", "--tiller-namespace=kube-system"]
 
           port {

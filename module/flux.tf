@@ -183,8 +183,32 @@ resource "kubernetes_deployment" "flux" {
 
         container {
           name  = "flux"
-          image = "docker.io/fluxcd/flux:1.20.0"
-          args  = ["--log-format=fmt", "--ssh-keygen-dir=/var/fluxd/keygen", "--ssh-keygen-format=RFC4716", "--k8s-secret-name=${kubernetes_secret.flux_git_deploy.metadata.0.name}", "--memcached-hostname=flux-memcached", "--sync-state=git", "--memcached-service=", "--git-url=git@github.com:nielstenboom/flux", "--git-branch=master", "--git-path=", "--git-readonly=false", "--git-user=Weave Flux", "--git-email=support@weave.works", "--git-verify-signatures=false", "--git-set-author=false", "--git-poll-interval=1m", "--git-timeout=20s", "--sync-interval=5m", "--git-ci-skip=false", "--automation-interval=1m", "--registry-rps=200", "--registry-burst=125", "--registry-trace=false", "--registry-include-image=docker-registry.rtl-di.nl/*,", "--sync-garbage-collection=true"]
+          image = "docker.io/fluxcd/flux:${var.flux_version}"
+          args = concat([
+          "--log-format=fmt", 
+          "--ssh-keygen-dir=/var/fluxd/keygen", 
+          "--ssh-keygen-format=RFC4716", 
+          "--k8s-secret-name=${kubernetes_secret.flux_git_deploy.metadata.0.name}", 
+          "--memcached-hostname=flux-memcached", 
+          "--sync-state=git", 
+          "--memcached-service=", 
+          "--git-url=${var.git_url}", 
+          "--git-branch=${var.git_branch}", 
+          "--git-path=${var.git_path}", 
+          "--git-readonly=false", 
+          "--git-user=Weave Flux", 
+          "--git-email=support@weave.works", 
+          "--git-verify-signatures=false", 
+          "--git-set-author=false", 
+          "--git-poll-interval=1m", 
+          "--git-timeout=20s", 
+          "--sync-interval=5m", 
+          "--git-ci-skip=false", 
+          "--automation-interval=1m", 
+          "--registry-rps=200", 
+          "--registry-burst=125", 
+          "--registry-trace=false"
+          ], var.flux_extra_arguments)
 
           port {
             name           = "http"
@@ -282,7 +306,7 @@ resource "kubernetes_deployment" "flux_memcached" {
       spec {
         container {
           name  = "memcached"
-          image = "memcached:1.5.20"
+          image = "memcached:${var.memcached_version}"
           args  = ["-m 512", "-p 11211", "-I 5m"]
 
           port {
