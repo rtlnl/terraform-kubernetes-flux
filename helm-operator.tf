@@ -8,16 +8,16 @@ resource "null_resource" "crds" {
 resource "kubernetes_service_account" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = var.helm_operator_name
+    name      = var.helm_operator_name
     namespace = var.namespace
-    labels = local.helm_operator_labels
+    labels    = local.helm_operator_labels
   }
 }
 
 resource "kubernetes_config_map" "helm_operator_kube_config" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "${var.helm_operator_name}-kube-config"
+    name      = "${var.helm_operator_name}-kube-config"
     namespace = var.namespace
   }
 
@@ -29,7 +29,7 @@ resource "kubernetes_config_map" "helm_operator_kube_config" {
 resource "kubernetes_cluster_role" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = var.helm_operator_name
+    name   = var.helm_operator_name
     labels = local.helm_operator_labels
   }
 
@@ -48,7 +48,7 @@ resource "kubernetes_cluster_role" "helm_operator" {
 resource "kubernetes_cluster_role_binding" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = var.helm_operator_name
+    name   = var.helm_operator_name
     labels = local.helm_operator_labels
   }
 
@@ -68,9 +68,9 @@ resource "kubernetes_cluster_role_binding" "helm_operator" {
 resource "kubernetes_service" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = var.helm_operator_name
+    name      = var.helm_operator_name
     namespace = var.namespace
-    labels = local.helm_operator_labels
+    labels    = local.helm_operator_labels
   }
 
   spec {
@@ -90,12 +90,12 @@ resource "kubernetes_service" "helm_operator" {
 }
 
 resource "kubernetes_deployment" "helm_operator" {
-  count = var.helm_operator ? 1 : 0
+  count      = var.helm_operator ? 1 : 0
   depends_on = [null_resource.crds]
   metadata {
-    name = var.helm_operator_name
+    name      = var.helm_operator_name
     namespace = var.namespace
-    labels = local.helm_operator_labels
+    labels    = local.helm_operator_labels
   }
 
   spec {
@@ -133,8 +133,8 @@ resource "kubernetes_deployment" "helm_operator" {
 
           resources {
             requests {
-              cpu    = "50m"
-              memory = "64Mi"
+              cpu    = var.helm_operator_resources["cpu"]
+              memory = var.helm_operator_resources["memory"]
             }
           }
 

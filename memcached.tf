@@ -3,7 +3,7 @@ resource "kubernetes_deployment" "flux_memcached" {
   metadata {
     name      = local.memcached
     namespace = kubernetes_namespace.flux.metadata.0.name
-    labels = local.memcached_labels
+    labels    = local.memcached_labels
   }
 
   spec {
@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "flux_memcached" {
         container {
           name  = "memcached"
           image = "memcached:${var.memcached_version}"
-          args  = ["-m 512", "-p 11211", "-I 5m"]
+          args  = var.memcached_arguments
 
           port {
             name           = "memcached"
@@ -31,8 +31,8 @@ resource "kubernetes_deployment" "flux_memcached" {
 
           resources {
             requests {
-              cpu    = "50m"
-              memory = "64Mi"
+              cpu    = var.memcached_resources["cpu"]
+              memory = var.memcached_resources["memory"]
             }
           }
 
@@ -61,7 +61,7 @@ resource "kubernetes_service" "flux_memcached" {
   metadata {
     name      = local.memcached
     namespace = kubernetes_namespace.flux.metadata.0.name
-    labels = local.memcached_labels
+    labels    = local.memcached_labels
   }
 
   spec {

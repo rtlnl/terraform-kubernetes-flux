@@ -10,7 +10,7 @@ resource "kubernetes_secret" "flux_git_deploy" {
     namespace = kubernetes_namespace.flux.metadata.0.name
   }
   type = "Opaque"
-  lifecycle { 
+  lifecycle {
     ignore_changes = [data]
   }
 }
@@ -30,13 +30,13 @@ resource "kubernetes_service_account" "flux" {
   metadata {
     name      = local.flux
     namespace = kubernetes_namespace.flux.metadata.0.name
-    labels = local.flux_labels
+    labels    = local.flux_labels
   }
 }
 
 resource "kubernetes_cluster_role" "flux" {
   metadata {
-    name = local.flux
+    name   = local.flux
     labels = local.flux_labels
   }
 
@@ -54,7 +54,7 @@ resource "kubernetes_cluster_role" "flux" {
 
 resource "kubernetes_cluster_role_binding" "flux" {
   metadata {
-    name = local.flux
+    name   = local.flux
     labels = local.flux_labels
   }
 
@@ -77,7 +77,7 @@ resource "kubernetes_service" "flux" {
   metadata {
     name      = local.flux
     namespace = kubernetes_namespace.flux.metadata.0.name
-    labels = local.flux_labels
+    labels    = local.flux_labels
   }
 
   spec {
@@ -89,7 +89,7 @@ resource "kubernetes_service" "flux" {
     }
 
     selector = local.flux_labels
-    type = "ClusterIP"
+    type     = "ClusterIP"
   }
 }
 
@@ -97,7 +97,7 @@ resource "kubernetes_deployment" "flux" {
   metadata {
     name      = local.flux
     namespace = kubernetes_namespace.flux.metadata.0.name
-    labels = local.flux_labels
+    labels    = local.flux_labels
   }
 
   spec {
@@ -143,10 +143,10 @@ resource "kubernetes_deployment" "flux" {
           name  = local.flux
           image = "docker.io/fluxcd/flux:${var.flux_version}"
           args = concat([
-          "--k8s-secret-name=${kubernetes_secret.flux_git_deploy.metadata.0.name}",  
-          "--git-url=${var.git_url}", 
-          "--git-branch=${var.git_branch}", 
-          "--git-path=${var.git_path}", 
+            "--k8s-secret-name=${kubernetes_secret.flux_git_deploy.metadata.0.name}",
+            "--git-url=${var.git_url}",
+            "--git-branch=${var.git_branch}",
+            "--git-path=${var.git_path}",
           ], var.flux_arguments)
 
           port {
@@ -162,8 +162,8 @@ resource "kubernetes_deployment" "flux" {
 
           resources {
             requests {
-              cpu    = "50m"
-              memory = "64Mi"
+              cpu    = var.flux_resources["cpu"]
+              memory = var.flux_resources["memory"]
             }
           }
 
