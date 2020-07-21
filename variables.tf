@@ -6,7 +6,7 @@ variable "namespace" {
 
 variable "helm_operator" {
   type = string
-  description = "Whether the helm operator should be installed next to Flux"
+  description = "Whether the helm operator should be installed next to Flux, if set to true, don't forget to manually apply the CRD, otherwise it will not work"
 }
 
 variable "flux_version" {
@@ -40,13 +40,13 @@ variable "git_path" {
 
 variable "memcached_version" {
   type = string
-  description = "Version of memcached"
+  description = "SemVer Version of memcached"
   default = "1.5.20"
 }
 
 variable "helm_operator_version" {
   type = string
-  description = "Version of the helm operator"
+  description = "SemVer Version of the helm operator"
   default = "1.1.0"
 }
 
