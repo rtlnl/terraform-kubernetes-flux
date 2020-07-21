@@ -9,6 +9,35 @@ variable "helm_operator" {
   description = "Whether the helm operator should be installed next to Flux, if set to true, don't forget to manually apply the CRD, otherwise it will not work"
 }
 
+variable "helm_operator_name" {
+  type = string
+  description = "Name of the helm operator resources"
+  default = "helm-operator" 
+}
+
+variable "helm_operator_arguments" {
+  type = list(string)
+  description = "Command line arguments supplied to the helm operator, check out https://docs.fluxcd.io/projects/helm-operator/en/stable/references/operator/"
+  default = [
+    "--enabled-helm-versions=v3", 
+    "--log-format=fmt", 
+    "--git-timeout=20s", 
+    "--git-poll-interval=5m", 
+    "--charts-sync-interval=3m", 
+    "--status-update-interval=30s", 
+    "--update-chart-deps=true", 
+    "--log-release-diffs=false", 
+    "--workers=4", 
+    "--tiller-namespace=kube-system"
+  ]
+}
+
+variable "helm_operator_version" {
+  type = string
+  description = "SemVer Version of the helm operator"
+  default = "1.1.0"
+}
+
 variable "flux_version" {
   type = string
   description  = "SemVer version of Flux"
@@ -42,11 +71,5 @@ variable "memcached_version" {
   type = string
   description = "SemVer Version of memcached"
   default = "1.5.20"
-}
-
-variable "helm_operator_version" {
-  type = string
-  description = "SemVer Version of the helm operator"
-  default = "1.1.0"
 }
 

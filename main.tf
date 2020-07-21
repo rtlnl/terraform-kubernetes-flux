@@ -11,6 +11,10 @@ resource "kubernetes_secret" "flux_git_deploy" {
   }
 
   type = "Opaque"
+
+  lifecycle { 
+    ignore_changes = [data]
+  }
 }
 
 resource "kubernetes_config_map" "flux_kube_config" {

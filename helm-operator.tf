@@ -8,19 +8,16 @@ resource "null_resource" "crds" {
 resource "kubernetes_service_account" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "helm-operator"
+    name = var.helm_operator_name
     namespace = var.namespace
-
-    labels = {
-      app = "helm-operator"
-    }
+    labels = local.helm_operator_labels
   }
 }
 
 resource "kubernetes_config_map" "helm_operator_kube_config" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "helm-operator-kube-config"
+    name = "${var.helm_operator_name}-kube-config"
     namespace = var.namespace
   }
 
@@ -32,11 +29,8 @@ resource "kubernetes_config_map" "helm_operator_kube_config" {
 resource "kubernetes_cluster_role" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "helm-operator"
-
-    labels = {
-      app = "helm-operator"
-    }
+    name = var.helm_operator_name
+    labels = local.helm_operator_labels
   }
 
   rule {
@@ -54,11 +48,8 @@ resource "kubernetes_cluster_role" "helm_operator" {
 resource "kubernetes_cluster_role_binding" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "helm-operator"
-
-    labels = {
-      app = "helm-operator"
-    }
+    name = var.helm_operator_name
+    labels = local.helm_operator_labels
   }
 
   subject {
@@ -77,11 +68,9 @@ resource "kubernetes_cluster_role_binding" "helm_operator" {
 resource "kubernetes_service" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   metadata {
-    name = "helm-operator"
+    name = var.helm_operator_name
     namespace = var.namespace
-    labels = {
-      app = "helm-operator"
-    }
+    labels = local.helm_operator_labels
   }
 
   spec {
@@ -104,28 +93,21 @@ resource "kubernetes_deployment" "helm_operator" {
   count = var.helm_operator ? 1 : 0
   depends_on = [null_resource.crds]
   metadata {
-    name = "helm-operator"
+    name = var.helm_operator_name
     namespace = var.namespace
-
-    labels = {
-      app = "helm-operator"
-    }
+    labels = local.helm_operator_labels
   }
 
   spec {
     replicas = 1
 
     selector {
-      match_labels = {
-        app = "helm-operator"
-      }
+      match_labels = local.helm_operator_labels
     }
 
     template {
       metadata {
-        labels = {
-          app = "helm-operator"
-        }
+        labels = local.helm_operator_labels
       }
 
       spec {
@@ -142,7 +124,7 @@ resource "kubernetes_deployment" "helm_operator" {
         container {
           name  = "flux-helm-operator"
           image = "docker.io/fluxcd/helm-operator:${var.helm_operator_version}"
-          args  = ["--enabled-helm-versions=v3", "--log-format=fmt", "--git-timeout=20s", "--git-poll-interval=5m", "--charts-sync-interval=3m", "--status-update-interval=30s", "--update-chart-deps=true", "--log-release-diffs=false", "--workers=4", "--tiller-namespace=kube-system"]
+          args  = var.helm_operator_arguments
 
           port {
             name           = "http"
@@ -191,7 +173,7 @@ resource "kubernetes_deployment" "helm_operator" {
           image_pull_policy = "IfNotPresent"
         }
 
-        service_account_name = "helm-operator"
+        service_account_name = var.helm_operator_name
       }
     }
 
