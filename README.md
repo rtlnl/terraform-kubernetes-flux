@@ -2,10 +2,7 @@
 
 This module will let you install Flux CD (https://fluxcd.io/) on a Kubernetes cluster.
 
-If you enable the helm operator, also manually apply the HelmRelease CRD, otherwise the helm operator will not work.
-```
-kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
-```
+Take a look at the [example](examples/minimal/main.tf) for a minimal example on how to call the module in your `main.tf` file.
 
 ## Requirements
 
