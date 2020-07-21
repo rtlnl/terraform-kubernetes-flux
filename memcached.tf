@@ -7,7 +7,7 @@ resource "kubernetes_deployment" "flux_memcached" {
   }
 
   spec {
-    replicas = 1
+    replicas = var.memcached_replicas
 
     selector {
       match_labels = local.memcached_labels

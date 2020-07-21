@@ -99,7 +99,7 @@ resource "kubernetes_deployment" "helm_operator" {
   }
 
   spec {
-    replicas = 1
+    replicas = var.helm_operator_replicas
 
     selector {
       match_labels = local.helm_operator_labels
