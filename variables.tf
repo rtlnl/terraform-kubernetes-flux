@@ -27,12 +27,6 @@ variable "flux_version" {
   default     = "1.20.0"
 }
 
-variable "flux_memcached_hostname" {
-  type        = string
-  description = "Hostname of memcached, change this if you want to use your own version of memcached"
-  default     = "flux-memcached"
-}
-
 variable "flux_arguments" {
   type        = list(string)
   description = "Arguments supplied to the flux container, for reference check the following: https://docs.fluxcd.io/en/latest/references/daemon/"
