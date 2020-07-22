@@ -15,17 +15,6 @@ resource "kubernetes_secret" "flux_git_deploy" {
   }
 }
 
-resource "kubernetes_config_map" "flux_kube_config" {
-  metadata {
-    name      = "${local.flux}-kube-config"
-    namespace = kubernetes_namespace.flux.metadata.0.name
-  }
-
-  data = {
-    config = local.config
-  }
-}
-
 resource "kubernetes_service_account" "flux" {
   metadata {
     name      = local.flux
@@ -114,13 +103,7 @@ resource "kubernetes_deployment" "flux" {
 
       spec {
         automount_service_account_token = true
-        volume {
-          name = "kubedir"
 
-          config_map {
-            name = kubernetes_config_map.flux_kube_config.metadata.0.name
-          }
-        }
 
         volume {
           name = "git-key"
@@ -155,11 +138,6 @@ resource "kubernetes_deployment" "flux" {
             protocol       = "TCP"
           }
 
-          env {
-            name  = "KUBECONFIG"
-            value = "/root/.kubectl/config"
-          }
-
           resources {
             requests {
               cpu    = var.flux_resources["cpu"]
@@ -167,10 +145,6 @@ resource "kubernetes_deployment" "flux" {
             }
           }
 
-          volume_mount {
-            name       = "kubedir"
-            mount_path = "/root/.kubectl"
-          }
 
           volume_mount {
             name       = "git-key"
