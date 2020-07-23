@@ -60,8 +60,6 @@ resource "kubernetes_cluster_role_binding" "flux" {
   }
 }
 
-
-
 resource "kubernetes_service" "flux" {
   metadata {
     name      = local.flux
@@ -104,7 +102,6 @@ resource "kubernetes_deployment" "flux" {
       spec {
         automount_service_account_token = true
 
-
         volume {
           name = "git-key"
 
@@ -144,8 +141,7 @@ resource "kubernetes_deployment" "flux" {
               memory = var.flux_resources["memory"]
             }
           }
-
-
+          
           volume_mount {
             name       = "git-key"
             read_only  = true
