@@ -141,7 +141,7 @@ resource "kubernetes_deployment" "flux" {
               memory = var.flux_resources["memory"]
             }
           }
-          
+
           volume_mount {
             name       = "git-key"
             read_only  = true
