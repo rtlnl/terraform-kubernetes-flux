@@ -68,7 +68,7 @@ variable "flux_replicas" {
   default     = 1
 }
 
-variable "helm_operator" {
+variable "install_helm_operator" {
   type        = bool
   description = "Whether the helm operator should be installed next to Flux, will only work with Helm v3 by default, change the helm_operator_arguments to make it support v2."
 }
@@ -116,7 +116,7 @@ variable "helm_operator_replicas" {
   default     = 1
 }
 
-variable "memcached" {
+variable "install_memcached" {
   type        = bool
   description = "Whether to create an instance of Memcached alongside the Flux deployment"
   default     = true

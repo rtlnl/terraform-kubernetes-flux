@@ -1,5 +1,5 @@
 resource "kubernetes_deployment" "flux_memcached" {
-  count = var.memcached ? 1 : 0
+  count = var.install_memcached ? 1 : 0
   metadata {
     name      = local.memcached
     namespace = kubernetes_namespace.flux.metadata.0.name
@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "flux_memcached" {
 }
 
 resource "kubernetes_service" "flux_memcached" {
-  count = var.memcached ? 1 : 0
+  count = var.install_memcached ? 1 : 0
   metadata {
     name      = local.memcached
     namespace = kubernetes_namespace.flux.metadata.0.name
