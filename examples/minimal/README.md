@@ -1,0 +1,12 @@
+## Example
+
+Call the module like the following in your main.tf for a minimal installation of FluxCD!
+
+```terraform
+module "flux" {
+  source = "rtlnl/flux/aws"
+
+  git_url = "git@github.com:myname/repo"
+  install_helm_operator = false
+}
+```
