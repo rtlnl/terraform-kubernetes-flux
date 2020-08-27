@@ -14,8 +14,8 @@ resource "null_resource" "crds" {
   }
 
   provisioner "local-exec" {
-    when    = "destroy"
-    command = "kubectl delete -f - <<'EOF'\n${data.template_file.crds.rendered}\nEOF"
+    when    = destroy
+    command = "kubectl delete -f ${path.module}/templates/crds.yaml"
   }
 }
 
