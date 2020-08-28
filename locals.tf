@@ -15,5 +15,5 @@ locals {
     app = "flux-memcached"
   }
 
-  config = "${file("${path.module}/templates/config.yaml")}"
+  config = file("${path.module}/templates/config.yaml")
 }
